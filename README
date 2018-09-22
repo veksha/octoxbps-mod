@@ -1,6 +1,29 @@
 This is OctoXBPS, a powerful XBPS front-end using Qt libs. 
 ================================================================
 
+THIS IS MODIFICATION.
+IMPORTANT NOTICE:
+	This is modified version of OctoXBPS and it requires
+	"xbps-query-custom" binary file to operate properly.
+	Please compile this file first and place it in your
+	global bin folder so OctoXBPS-mod can use it:
+	
+	$ cd xbps-query-custom/xbps-query/
+	$ make
+	$ cp xbps-query-custom /bin
+
+	--- veksha.
+	
+Main MOD changes:
+
+	1. added size column (using xbps-query-custom for data supply)
+	2. added view menu (all/installed/not installed)
+	3. fixed slow populating of data (smart sorting)
+	4. fixed RSS url (can be specified in configuration file)
+
+
+Old readme notes:
+
 You'll need "git" and "qt5" packages in order to get latest dev version!
 
 To download the source code, type:
