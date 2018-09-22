@@ -141,8 +141,10 @@ void MainWindow::savePackageColumnWidths()
         ui->tvPackages->columnWidth(PackageModel::ctn_PACKAGE_ICON_COLUMN));
   SettingsManager::setPackageNameColumnWidth(
         ui->tvPackages->columnWidth(PackageModel::ctn_PACKAGE_NAME_COLUMN));
-  //SettingsManager::setPackageVersionColumnWidth(
-  //      ui->tvPackages->columnWidth(PackageModel::ctn_PACKAGE_VERSION_COLUMN));
+  SettingsManager::setPackageVersionColumnWidth(
+        ui->tvPackages->columnWidth(PackageModel::ctn_PACKAGE_VERSION_COLUMN));
+  SettingsManager::setPackageInstalledSizeColumnWidth(
+        ui->tvPackages->columnWidth(PackageModel::ctn_PACKAGE_SIZE_COLUMN));
 }
 
 /*
@@ -267,7 +269,23 @@ void MainWindow::initMenuBar()
   m_actionMenuRepository->setMenu(subMenu);
   */
 
-  ui->menuView->menuAction()->setVisible(false);
+  //ui->menuView->menuAction()->setVisible(false);
+
+    int vmode = SettingsManager::getPackageViewMode();
+    switch (vmode)
+    {
+      case 1:
+        m_selectedViewOption = ectn_INSTALLED_PKGS;
+        ui->actionViewInstalledPackages->setChecked(true);
+        break;
+      case 2:
+        m_selectedViewOption = ectn_NON_INSTALLED_PKGS;
+        ui->actionViewNonInstalledPackages->setChecked(true);
+        break;
+      default:
+        //m_selectedViewOption = ectn_ALL_PKGS;      // no need
+        ui->actionViewAllPackages->setChecked(true); // needed
+    }
 
   foreach (QAction * act,  ui->menuBar->actions())
   {
@@ -467,14 +485,16 @@ void MainWindow::initPackageTreeView()
   ui->tvPackages->setVerticalScrollMode(QAbstractItemView::ScrollPerItem);
   ui->tvPackages->setAllColumnsShowFocus( true );
   ui->tvPackages->setModel(m_packageModel.get());
-  ui->tvPackages->setSortingEnabled( true );
+  ui->tvPackages->setSortingEnabled( false );
   ui->tvPackages->setIndentation( 0 );
   ui->tvPackages->header()->setSortIndicatorShown(true);
   ui->tvPackages->header()->setSectionsClickable(true);
   ui->tvPackages->header()->setSectionsMovable(false);
+  ui->tvPackages->header()->setStretchLastSection(false);
   ui->tvPackages->header()->setSectionResizeMode(QHeaderView::Interactive);
   ui->tvPackages->header()->setDefaultAlignment( Qt::AlignLeft );
   resizePackageView();
+
 
   connect(ui->tvPackages->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
           this, SLOT(tvPackagesSelectionChanged(QItemSelection,QItemSelection)));
@@ -489,12 +509,17 @@ void MainWindow::initPackageTreeView()
 
 void MainWindow::resizePackageView()
 {
-  ui->tvPackages->setColumnWidth(PackageModel::ctn_PACKAGE_ICON_COLUMN,
-                                 SettingsManager::getPackageIconColumnWidth());
-  ui->tvPackages->setColumnWidth(PackageModel::ctn_PACKAGE_NAME_COLUMN,
-                                 SettingsManager::getPackageNameColumnWidth());
-  //ui->tvPackages->setColumnWidth(PackageModel::ctn_PACKAGE_VERSION_COLUMN,
-  //                               SettingsManager::getPackageVersionColumnWidth());
+  int iIconW = SettingsManager::getPackageIconColumnWidth();
+  int iNameW = SettingsManager::getPackageNameColumnWidth();
+  int iVersW = SettingsManager::getPackageVersionColumnWidth();
+  //int iSizeW = SettingsManager::getPackageInstalledSizeColumnWidth();
+
+  ui->tvPackages->setColumnWidth(PackageModel::ctn_PACKAGE_ICON_COLUMN, iIconW);
+  ui->tvPackages->setColumnWidth(PackageModel::ctn_PACKAGE_NAME_COLUMN, iNameW);
+  ui->tvPackages->setColumnWidth(PackageModel::ctn_PACKAGE_VERSION_COLUMN, iVersW);
+  //ui->tvPackages->setColumnWidth(PackageModel::ctn_PACKAGE_SIZE_COLUMN, iSizeW);
+  ui->tvPackages->setColumnWidth(PackageModel::ctn_PACKAGE_SIZE_COLUMN,
+                                 this->width() - iIconW - iNameW - iVersW - 24);
 }
 
 /*

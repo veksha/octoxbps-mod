@@ -797,6 +797,7 @@ void MainWindow::buildPackageList()
 
   reapplyPackageFilter();
 
+
   QModelIndex maux = m_packageModel->index(0, 0, QModelIndex());
   ui->tvPackages->setCurrentIndex(maux);
   ui->tvPackages->scrollTo(maux, QAbstractItemView::PositionAtCenter);
@@ -848,12 +849,14 @@ void MainWindow::buildPackageList()
     }
   }
 
-  ui->tvPackages->setColumnWidth(PackageModel::ctn_PACKAGE_SIZE_COLUMN, 10);
+  //ui->tvPackages->setColumnWidth(PackageModel::ctn_PACKAGE_SIZE_COLUMN, 10);
   refreshToolBar();
   refreshStatusBarToolButtons();
   m_refreshPackageLists = true;  
 
   emit buildPackageListDone();
+
+  m_packageModel->setSortingEnabled(true);
 }
 
 /*
@@ -1359,7 +1362,7 @@ void MainWindow::reapplyPackageFilter()
     }
     else{
       m_leFilterPackage->initStyleSheet();
-      m_packageModel->applyFilter("");
+      //m_packageModel->applyFilter("");
     }
 
     if (isFilterPackageSelected || numPkgs == 0)
@@ -1395,9 +1398,16 @@ void MainWindow::reapplyPackageFilter()
  * Whenever user selects View/All we show him all the available packages
  */
 void MainWindow::selectedAllPackagesMenu()
-{  
+{
+    if (!ui->actionViewAllPackages->isChecked())
+    {
+        ui->actionViewAllPackages->setChecked(true);
+        return;
+    }
   m_selectedViewOption = ectn_ALL_PKGS;
   changePackageListModel(ectn_ALL_PKGS, m_selectedRepository);
+    ui->actionViewInstalledPackages->setChecked(false);
+    ui->actionViewNonInstalledPackages->setChecked(false);
 }
 
 /*
@@ -1405,8 +1415,15 @@ void MainWindow::selectedAllPackagesMenu()
  */
 void MainWindow::selectedInstalledPackagesMenu()
 {
+  if (!ui->actionViewInstalledPackages->isChecked())
+  {
+      ui->actionViewInstalledPackages->setChecked(true);
+      return;
+  }
   m_selectedViewOption = ectn_INSTALLED_PKGS;
   changePackageListModel(ectn_INSTALLED_PKGS, m_selectedRepository);
+  ui->actionViewAllPackages->setChecked(false);
+  ui->actionViewNonInstalledPackages->setChecked(false);
 }
 
 /*
@@ -1414,8 +1431,15 @@ void MainWindow::selectedInstalledPackagesMenu()
  */
 void MainWindow::selectedNonInstalledPackagesMenu()
 {
+    if (!ui->actionViewNonInstalledPackages->isChecked())
+    {
+        ui->actionViewNonInstalledPackages->setChecked(true);
+        return;
+    }
   m_selectedViewOption = ectn_NON_INSTALLED_PKGS;
   changePackageListModel(ectn_NON_INSTALLED_PKGS, m_selectedRepository);
+  ui->actionViewAllPackages->setChecked(false);
+  ui->actionViewInstalledPackages->setChecked(false);
 }
 
 /*

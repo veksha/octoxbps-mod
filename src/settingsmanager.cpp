@@ -169,19 +169,41 @@ int SettingsManager::getPackageListSortOrder(){
 int SettingsManager::getPackageIconColumnWidth()
 {
   return instance()->getSYSsettings()->value(
-        ctn_KEY_PACKAGE_ICON_COLUMN_WIDTH, 24).toInt();
+        ctn_KEY_PACKAGE_ICON_COLUMN_WIDTH, 40).toInt();
 }
 
 int SettingsManager::getPackageNameColumnWidth()
 {
   return instance()->getSYSsettings()->value(
-        ctn_KEY_PACKAGE_NAME_COLUMN_WIDTH, 500).toInt();
+        ctn_KEY_PACKAGE_NAME_COLUMN_WIDTH, 450).toInt();
 }
 
 int SettingsManager::getPackageVersionColumnWidth()
 {
   return instance()->getSYSsettings()->value(
-        ctn_KEY_PACKAGE_VERSION_COLUMN_WIDTH, 260).toInt();
+        ctn_KEY_PACKAGE_VERSION_COLUMN_WIDTH, 250).toInt();
+}
+
+int SettingsManager::getPackageInstalledSizeColumnWidth()
+{
+  return instance()->getSYSsettings()->value(
+        ctn_KEY_PACKAGE_INSTALLED_SIZE_COLUMN_WIDTH, 100).toInt();
+}
+
+int SettingsManager::getPackageViewMode()
+{
+  return instance()->getSYSsettings()->value(
+        ctn_KEY_PACKAGE_VIEW_MODE, 0).toInt();
+}
+
+QString SettingsManager::getVoid_RSS_URL()
+{
+  if (!instance()->getSYSsettings()->contains(ctn_KEY_VOID_RSS_URL)){
+    instance()->getSYSsettings()->setValue(ctn_KEY_VOID_RSS_URL, ctn_DEFAULT_VOID_RSS_URL);
+  }
+
+  return instance()->getSYSsettings()->value(
+        ctn_KEY_VOID_RSS_URL, ctn_DEFAULT_VOID_RSS_URL).toString();
 }
 
 bool SettingsManager::getSkipMirrorCheckAtStartup(){
@@ -301,6 +323,22 @@ void SettingsManager::setPackageNameColumnWidth(int newValue)
 void SettingsManager::setPackageVersionColumnWidth(int newValue)
 {
   instance()->getSYSsettings()->setValue(ctn_KEY_PACKAGE_VERSION_COLUMN_WIDTH, newValue);
+  instance()->getSYSsettings()->sync();
+}
+
+void SettingsManager::setPackageInstalledSizeColumnWidth(int newValue)
+{
+  instance()->getSYSsettings()->setValue(ctn_KEY_PACKAGE_INSTALLED_SIZE_COLUMN_WIDTH, newValue);
+  instance()->getSYSsettings()->sync();
+}
+
+void SettingsManager::setPackageViewMode(int newValue){
+  instance()->getSYSsettings()->setValue( ctn_KEY_PACKAGE_VIEW_MODE, newValue);
+  instance()->getSYSsettings()->sync();
+}
+
+void SettingsManager::setVoid_RSS_URL(QString newValue){
+  instance()->getSYSsettings()->setValue( ctn_KEY_VOID_RSS_URL, newValue);
   instance()->getSYSsettings()->sync();
 }
 

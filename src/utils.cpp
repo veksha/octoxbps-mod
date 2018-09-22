@@ -278,7 +278,7 @@ QList<QModelIndex> * utils::findFileInTreeView( const QString& name, const QStan
  */
 QString utils::retrieveDistroNews(bool searchForLatestNews)
 {
-  const QString ctn_VOID_RSS_URL = "https://www.voidlinux.eu/atom.xml";
+  const QString Void_RSS_URL = SettingsManager::getVoid_RSS_URL();
 
   LinuxDistro distro = UnixCommand::getLinuxDistro();
   QString res;
@@ -301,7 +301,7 @@ QString utils::retrieveDistroNews(bool searchForLatestNews)
 
     if (distro == ectn_VOID)
     {
-      curlCommand = curlCommand.arg(ctn_VOID_RSS_URL).arg(tmpRssPath);
+      curlCommand = curlCommand.arg(Void_RSS_URL).arg(tmpRssPath);
     }
 
     if (UnixCommand::runCurlCommand(curlCommand).isEmpty())

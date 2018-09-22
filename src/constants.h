@@ -68,8 +68,13 @@ const QString ctn_KEY_SHOW_GROUPS_PANEL("Show_Groups_Panel");
 const QString ctn_KEY_PACKAGE_ICON_COLUMN_WIDTH("Package_Icon_Column_Width");
 const QString ctn_KEY_PACKAGE_NAME_COLUMN_WIDTH("Package_Name_Column_Width");
 const QString ctn_KEY_PACKAGE_VERSION_COLUMN_WIDTH("Package_Version_Column_Width");
+const QString ctn_KEY_PACKAGE_INSTALLED_SIZE_COLUMN_WIDTH("Package_Installed_Size_Column_Width");
+const QString ctn_KEY_PACKAGE_VIEW_MODE("Package_View_Mode");
 const QString ctn_KEY_TERMINAL("Terminal");
 const QString ctn_AUTOMATIC("automatic");
+const QString ctn_KEY_VOID_RSS_URL("Void_RSS_URL");
+const QString ctn_DEFAULT_VOID_RSS_URL("https://voidlinux.org/atom.xml");
+//const QString ctn_DEFAULT_VOID_RSS_URL("https://github.com/void-linux/void-packages/commits/master.atom");
 
 //Notifier related
 const QString ctn_KEY_LAST_SYNC_DB_TIME("LastSyncDbTime");

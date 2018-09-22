@@ -86,6 +86,7 @@ MainWindow::MainWindow(QWidget *parent) :
 MainWindow::~MainWindow()
 {
   savePackageColumnWidths();
+  SettingsManager::setPackageViewMode(m_selectedViewOption);
 
   //Let's garbage collect transaction files...
   m_unixCommand->removeTemporaryFiles();
@@ -106,7 +107,7 @@ void MainWindow::show()
     m_leFilterPackage = new SearchLineEdit(this, m_hasSLocate);
 
     setWindowTitle(StrConstants::getApplicationName());
-    setMinimumSize(QSize(820, 520));
+    setMinimumSize(QSize(960, 740));
 
     initTabOutput();
     initTabInfo();

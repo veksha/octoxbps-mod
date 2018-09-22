@@ -143,7 +143,7 @@ QString OctopiTabInfo::formatTabInfo(const PackageRepository::PackageData& packa
   }*/
 
   if(package.downloadSize != 0)
-    html += "<tr><td>" + downloadSize + "</td><td>" + Package::kbytesToSize(package.downloadSize) + "</td></tr>";
+    html += "<tr><td>" + downloadSize + "</td><td>" + Package::bytesToSize(package.downloadSize) + "</td></tr>";
 
   if (!package.installed())
     html += "<tr><td>" + downloadSize + "</td><td>" + Package::getRemoteFilenameSize(package.name) + "</td></tr>";

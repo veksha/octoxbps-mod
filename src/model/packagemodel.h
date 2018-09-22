@@ -70,6 +70,7 @@ public:
   int getPackageCount() const;
   int getInstalledPackagesCount() const;
   bool isFiltered() const;
+  bool isSortingEnabled() const;
 
   const PackageRepository::PackageData* getData(const QModelIndex& index) const;
 
@@ -82,6 +83,7 @@ public:
   void applyFilter(const int filterColumn, const QString& filterExp);
 
   void setShowColumnPopularity(bool value);
+  void setSortingEnabled(bool value);
 
 private:
   const QIcon& getIconFor(const PackageRepository::PackageData& package) const;
@@ -103,6 +105,7 @@ private:
   QString m_filterPackagesNotInThisRepo;
   int     m_filterColumn;
   QRegExp m_filterRegExp;
+  bool    m_isSortingEnabled;
 
   // Cache
   QIcon   m_iconNotInstalled;

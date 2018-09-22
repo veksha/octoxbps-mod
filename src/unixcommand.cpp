@@ -172,6 +172,25 @@ QByteArray UnixCommand::performQuery(const QString &args)
   return result;
 }
 
+QByteArray UnixCommand::performCustomQuery()
+{
+  QByteArray result("");
+  QProcess pacman;
+  QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
+  env.remove("COLUMNS");
+  env.insert("COLUMNS", "170");
+  env.insert("LANG", "C");
+  env.insert("LC_MESSAGES", "C");
+  env.insert("LC_ALL", "C");
+  pacman.setProcessEnvironment(env);
+
+  pacman.start("xbps-query-custom");
+  pacman.waitForFinished();
+  result = pacman.readAllStandardOutput();
+  pacman.close();
+  return result;
+}
+
 /*
  * Performs a yourt command
  */
@@ -287,7 +306,7 @@ QByteArray UnixCommand::getPackageList(const QString &pkgName)
   if (pkgName.isEmpty())
   {
 #ifdef UNIFIED_SEARCH
-    result = performQuery("query -Rs -");
+    result = performCustomQuery();
 #else
     result = performQuery("query -l");
 #endif

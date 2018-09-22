@@ -58,6 +58,9 @@ class SettingsManager
     static int getPackageIconColumnWidth();
     static int getPackageNameColumnWidth();
     static int getPackageVersionColumnWidth();
+    static int getPackageInstalledSizeColumnWidth();
+    static int getPackageViewMode();
+    static QString getVoid_RSS_URL();
 
     //Notifier related
     static int getSyncDbHour();
@@ -95,6 +98,9 @@ class SettingsManager
     static void setPackageIconColumnWidth(int newValue);
     static void setPackageNameColumnWidth(int newValue);
     static void setPackageVersionColumnWidth(int newValue);
+    static void setPackageInstalledSizeColumnWidth(int newValue);
+    static void setPackageViewMode(int newValue);
+    static void setVoid_RSS_URL(QString newValue);
 };
 
 #endif // SETTINGSMANAGER_H

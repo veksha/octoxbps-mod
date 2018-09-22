@@ -218,8 +218,8 @@ class Package{
     static QString getRemoteMaintainer(const QString &pkgName);
     static QString getRemoteHomepage(const QString &pkgName);
     static QString getRemoteFilenameSize(const QString &pkgName);
-    static QString kbytesToSize(float Bytes );
-    static double strToKBytes(QString size);
+    static QString bytesToSize(float Bytes );
+    static double strToBytes(QString size);
     static double strToKBytes2(QString size);
     static QString makeURLClickable(const QString &information);
     static QString getBaseName( const QString& pkgName );

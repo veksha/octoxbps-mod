@@ -127,29 +127,35 @@ double Package::simplePow(int base, int exp)
   return result;
 }
 
+QString numToString( float num )
+{
+    QString str = QString::number( num, 'f', 2 );
+    str.remove( QRegExp("00$") ); // Remove trailing 00's
+    str.remove( QRegExp("\\.$") ); // If the last character is just a '.' then remove it
+    return str;
+}
+
 /*
  * Converts a size in kbytes to a readable QString representation
  */
-QString Package::kbytesToSize( float Bytes )
+QString Package::bytesToSize( float Bytes )
 {
-  float tb = 1073741824;
-  float gb = 1048576;
-  float mb = 1024;
-  float kb = 1;
+  float tb = 1099511627776;
+  float gb = 1073741824;
+  float mb = 1048576;
+  float kb = 1024;
   QString res;
 
   if( Bytes >= tb )
-    res = res.sprintf("%.2f TiB", (float)Bytes/tb);
+    res = numToString(Bytes/tb).append(" TB");
   else if( Bytes >= gb && Bytes < tb )
-    res = res.sprintf("%.2f GiB", (float)Bytes/gb);
+    res = numToString(Bytes/gb).append(" GB");
   else if( Bytes >= mb && Bytes < gb )
-    res = res.sprintf("%.2f MiB", (float)Bytes/mb);
+    res = numToString(Bytes/mb).append(" MB");
   else if( Bytes >= kb && Bytes < mb )
-    res = res.sprintf("%.2f KiB", (float)Bytes/kb);
+    res = numToString(Bytes/kb).append(" KB");
   else if ( Bytes < kb)
-    res = res.sprintf("%.2f Bytes", Bytes * 1024);
-  else
-    res = res.sprintf("%.2f Bytes", Bytes);
+    res = res.sprintf("%.0f Bytes", Bytes);
 
   return res;
 }
@@ -157,18 +163,19 @@ QString Package::kbytesToSize( float Bytes )
 /*
  * Converts the size in String type to double
  */
-double Package::strToKBytes(QString size)
+double Package::strToBytes(QString size)
 {
   double res=0;
   if (size == "0.00B") res = 0;
-  else if (size.contains("kB", Qt::CaseInsensitive))
+  else if (size.contains("KB", Qt::CaseInsensitive))
   {
     bool ok;
-    int p = size.indexOf("kB", Qt::CaseInsensitive);
+    int p = size.indexOf("KB", Qt::CaseInsensitive);
     double value = size.left(p).toDouble(&ok);
     if (ok)
     {
-      res = value / 1.024;
+      //res = value / 1.024;
+        res = value * 1024;
     }
   }
   else if (size.contains("MB"))
@@ -178,7 +185,8 @@ double Package::strToKBytes(QString size)
     double value = size.left(p).toDouble(&ok);
     if (ok)
     {
-      res = (value * 1024) / 1.048576;
+      //res = (value * 1024) / 1.048576;
+        res = (value * 1024 * 1024);
     }
   }
   else if (size.contains("B"))
@@ -190,6 +198,10 @@ double Package::strToKBytes(QString size)
     {
       res = value;
     }
+  }
+  else
+  {
+
   }
 
   return res;
@@ -486,10 +498,11 @@ QList<PackageListData> * Package::getPackageList(const QString &packageName)
       else
         pkgStatus = ectn_NON_INSTALLED;
 
+      //pkgDownloadedSize = strToBytes(parts[3]);
       pkgDownloadedSize = 0;
-      pkgInstalledSize = 0; //strToKBytes(parts[3]);
+      pkgInstalledSize = strToBytes(parts[2]);
 
-      for(int c=2; c<parts.count(); c++)
+      for(int c=4; c<parts.count(); c++)
       {
         pkgComment += " " + parts[c];
       }
@@ -1077,7 +1090,7 @@ QString Package::getInformationDescription(const QString &pkgName, bool foreignP
 QString Package::getInformationInstalledSize(const QString &pkgName, bool foreignPackage)
 {
   QString pkgInfo = UnixCommand::getPackageInformation(pkgName, foreignPackage);
-  return kbytesToSize(getInstalledSize(pkgInfo));
+  return bytesToSize(getInstalledSize(pkgInfo));
 }
 
 

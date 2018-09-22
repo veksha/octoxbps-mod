@@ -37,6 +37,7 @@ PackageModel::PackageModel(const PackageRepository& repo, QObject *parent)
   m_sortOrder(Qt::AscendingOrder), m_sortColumn(1), m_filterPackagesInstalled(false),
   m_filterPackagesNotInstalled(false), m_filterPackagesNotInThisGroup(""),
   m_filterColumn(-1), m_filterRegExp("", Qt::CaseInsensitive, QRegExp::RegExp),
+  m_isSortingEnabled(false),
   m_iconNotInstalled(IconHelper::getIconNonInstalled()), m_iconInstalled(IconHelper::getIconInstalled()),
   m_iconInstalledUnrequired(IconHelper::getIconUnrequired()),
   m_iconNewer(IconHelper::getIconNewer()), m_iconOutdated(IconHelper::getIconOutdated()),
@@ -74,7 +75,7 @@ int PackageModel::rowCount(const QModelIndex &parent) const
 int PackageModel::columnCount(const QModelIndex &parent) const
 {
   if (!parent.isValid()) {
-    return 3;
+    return 4;
   }
   else return 0;
 }
@@ -97,10 +98,10 @@ QVariant PackageModel::data(const QModelIndex &index, int role) const
             return QVariant(package->version);
           case ctn_PACKAGE_SIZE_COLUMN:
           {
-            if (package->installed())
-              return QVariant(Package::kbytesToSize(package->installedSize));
-            else
-              return QVariant(Package::kbytesToSize(package->downloadSize));
+            //if (package->installed())
+              return QVariant(Package::bytesToSize(package->installedSize));
+            //else
+              //return QVariant(Package::bytesToSize(package->downloadSize));
           }
 
           break;
@@ -143,8 +144,8 @@ QVariant PackageModel::headerData(int section, Qt::Orientation orientation, int 
         return QVariant(StrConstants::getVersion());
       /*case ctn_PACKAGE_ORIGIN_COLUMN:
         return QVariant(StrConstants::getOrigin());*/
-      /*case ctn_PACKAGE_SIZE_COLUMN:
-        return QVariant(StrConstants::getSize());*/
+      case ctn_PACKAGE_SIZE_COLUMN:
+        return QVariant(StrConstants::getSize());
       default:
         break;
       }
@@ -162,6 +163,7 @@ void PackageModel::sort(int column, Qt::SortOrder order)
   {
     m_sortColumn = column;
     m_sortOrder  = order;
+    if (!m_isSortingEnabled) return;
     emit layoutAboutToBeChanged();
     sort();
     emit layoutChanged();
@@ -193,8 +195,8 @@ void PackageModel::endResetRepository()
 
   for (QList<PackageRepository::PackageData*>::const_iterator it = data.begin(); it != data.end(); ++it)
   {
-    //if (m_filterPackagesNotInstalled && (*it)->installed()) continue;
-    //else if (m_filterPackagesInstalled && !(*it)->installed()) continue;
+    if (m_filterPackagesNotInstalled && (*it)->installed()) continue;
+    else if (m_filterPackagesInstalled && !(*it)->installed()) continue;
 
     if (!m_filterPackagesNotInThisRepo.isEmpty() && (*it)->repository != m_filterPackagesNotInThisRepo) continue;
 
@@ -211,6 +213,13 @@ void PackageModel::endResetRepository()
           if ((*it)->installed()) m_installedPackagesCount++;
         }
         break;
+      /*case ctn_PACKAGE_SIZE_COLUMN:
+        if ((*it)->installedSize != -1)
+        {
+          m_listOfPackages.push_back(*it);
+          if ((*it)->installed()) m_installedPackagesCount++;
+        }
+        break;*/
       case ctn_PACKAGE_DESCRIPTION_FILTER_NO_COLUMN:
         if (m_filterRegExp.indexIn((*it)->comment) != -1)
         {
@@ -247,6 +256,11 @@ bool PackageModel::isFiltered() const
           m_filterPackagesNotInstalled ||
           !m_filterPackagesNotInThisGroup.isEmpty() ||
           !m_filterPackagesNotInThisRepo.isEmpty());
+}
+
+bool PackageModel::isSortingEnabled() const
+{
+  return m_isSortingEnabled;
 }
 
 const PackageRepository::PackageData* PackageModel::getData(const QModelIndex& index) const
@@ -313,6 +327,13 @@ void PackageModel::applyFilter(const int filterColumn, const QString& filterExp)
 void PackageModel::setShowColumnPopularity(bool value)
 {
   m_showColumnPopularity = value;
+}
+
+void PackageModel::setSortingEnabled(bool value)
+{
+  m_isSortingEnabled = value;
+  if (m_isSortingEnabled)
+      sort();
 }
 
 const QIcon& PackageModel::getIconFor(const PackageRepository::PackageData& package) const
@@ -422,22 +443,25 @@ struct TSort3 {
 };
 
 struct TSort4 {
-  bool operator()(const PackageRepository::PackageData* a, const PackageRepository::PackageData* b) const {      
-    QString mag_a, mag_b, aux_a, aux_b;
+  bool operator()(const PackageRepository::PackageData* a, const PackageRepository::PackageData* b) const {
+
+    return a->installedSize > b->installedSize;
+
+    /*QString mag_a, mag_b, aux_a, aux_b;
     bool installed = true;
 
     if (a->repository != ctn_PKGNG_FAKE_REPOSITORY)
     {
-      aux_a = Package::kbytesToSize(a->installedSize);
-      aux_b = Package::kbytesToSize(b->installedSize);
+      aux_a = Package::bytesToSize(a->installedSize);
+      aux_b = Package::bytesToSize(b->installedSize);
       installed = true;
       //qDebug() << "a is: " << aux_a;
       //qDebug() << "b is: " << aux_b;
     }
     else if (a->repository == ctn_PKGNG_FAKE_REPOSITORY)
     {
-      aux_a = Package::kbytesToSize(a->downloadSize);
-      aux_b = Package::kbytesToSize(b->downloadSize);
+      aux_a = Package::bytesToSize(a->downloadSize);
+      aux_b = Package::bytesToSize(b->downloadSize);
       installed = false;
       //qDebug() << "a is: " << aux_a;
       //qDebug() << "b is: " << aux_b;
@@ -453,32 +477,33 @@ struct TSort4 {
     {
       if (installed)
       {
-        if (a->installedSize < b->installedSize) return true;
+        if (a->installedSize < b->installedSize) return !true;
 
         if (a->installedSize == b->installedSize) {
-          return a->name < b->name;
+          return !(a->name < b->name);
         }
       }
       else
       {
-        if (a->downloadSize < b->downloadSize) return true;
+        if (a->downloadSize < b->downloadSize) return !true;
 
         if (a->downloadSize == b->downloadSize) {
-          return a->name < b->name;
+          return !(a->name < b->name);
         }
       }
     }
     else
     {
-      if (mag_a < mag_b) return true;
+      if (mag_a < mag_b) return !true;
     }
 
-    return false;
+    return !false;*/
   }
 };
 
 void PackageModel::sort()
 {
+    if (!m_isSortingEnabled) return;
   switch (m_sortColumn) {
   case ctn_PACKAGE_NAME_COLUMN:
     m_columnSortedlistOfPackages = m_listOfPackages;
