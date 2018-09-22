@@ -360,8 +360,8 @@ TransactionInfo Package::getTargetUpgradeList(const QString &pkgName)
   res.packages = new QStringList();
   int pos;
   QString strSum;
-  double number;
-  double sum;
+  double number = 0.0;
+  double sum = 0.0;
 
   foreach(QString infoTuple, infoTuples)
   {
