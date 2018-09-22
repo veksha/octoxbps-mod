@@ -86,7 +86,7 @@ void OutputDialog::init()
   m_progressBar->setMaximum(100);
   m_progressBar->setValue(0);
   m_progressBar->close();
-  m_searchBar->show();
+  //m_searchBar->show(); // hide searchbar by default
 }
 
 /*
