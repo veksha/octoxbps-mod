@@ -320,7 +320,7 @@ void MainWindow::initToolBar()
   m_dummyAction->setVisible(false);
   ui->mainToolBar->addAction(m_dummyAction);
   m_leFilterPackage->setMinimumHeight(24);
-  m_leFilterPackage->setPlaceholderText(StrConstants::getLineEditTextLocal() + "  (Ctrl+L)");
+  m_leFilterPackage->setPlaceholderText(StrConstants::getLineEditTextLocal() + " by Name  (Ctrl+L)");
   ui->mainToolBar->addWidget(m_leFilterPackage);
   ui->mainToolBar->toggleViewAction()->setEnabled(false);
   ui->mainToolBar->toggleViewAction()->setVisible(false);

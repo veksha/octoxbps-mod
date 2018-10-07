@@ -499,6 +499,7 @@ void MainWindow::tvPackagesSearchColumnChanged(QAction *actionSelected)
   //We are in the realm of tradictional NAME search
   if (actionSelected->objectName() == ui->actionSearchByName->objectName())
   {
+    m_leFilterPackage->setPlaceholderText(StrConstants::getLineEditTextLocal() + " by Name  (Ctrl+L)");
     ui->menuView->setEnabled(true);
     //if (!m_actionSwitchToPkgSearch->isChecked()) ui->twGroups->setEnabled(true);
 
@@ -513,6 +514,7 @@ void MainWindow::tvPackagesSearchColumnChanged(QAction *actionSelected)
   //We are talking about slower 'search by description'...
   else if (actionSelected->objectName() == ui->actionSearchByDescription->objectName())
   {
+    m_leFilterPackage->setPlaceholderText(StrConstants::getLineEditTextLocal() + " by Description  (Ctrl+L)");
     ui->menuView->setEnabled(true);
     //if (!m_actionSwitchToPkgSearch->isChecked()) ui->twGroups->setEnabled(true);
 
@@ -526,6 +528,7 @@ void MainWindow::tvPackagesSearchColumnChanged(QAction *actionSelected)
   }
   else if (actionSelected->objectName() == ui->actionSearchByFile->objectName())
   {
+    m_leFilterPackage->setPlaceholderText(StrConstants::getLineEditTextLocal() + " by File, for example \"*console*\"  (Ctrl+L)");
     m_leFilterPackage->clear();
     m_packageModel->applyFilter("");
     //ui->actionViewAllPackages->trigger();
