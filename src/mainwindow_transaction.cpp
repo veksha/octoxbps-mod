@@ -1275,6 +1275,7 @@ void MainWindow::disableTransactionActions()
  */
 void MainWindow::enableTransactionActions()
 {
+  toggleSystemActions(true);
   toggleTransactionActions(true);
 }
 
@@ -1327,6 +1328,12 @@ void MainWindow::toggleTransactionActions(const bool value)
   m_actionSysInfo->setEnabled(value);
   ui->actionGetNews->setEnabled(value);
   ui->actionOpenRootTerminal->setEnabled(value);
+  ui->actionViewAllPackages->setEnabled(value);
+  ui->actionViewInstalledPackages->setEnabled(value);
+  ui->actionViewNonInstalledPackages->setEnabled(value);
+  ui->actionSearchByName->setEnabled(value);
+  ui->actionSearchByDescription->setEnabled(value);
+  ui->actionSearchByFile->setEnabled(value);
   ui->actionHelpUsage->setEnabled(value);
   ui->actionHelpAbout->setEnabled(value);
   ui->actionExit->setEnabled(value);

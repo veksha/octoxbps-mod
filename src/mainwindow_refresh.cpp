@@ -1197,6 +1197,7 @@ void MainWindow::refreshTabFiles(bool clearContents, bool neverQuit)
     m_progressWidget->show(); // if progressbar is visible, this method will not
                                                      // be called 2nd time. (see first line)
                                                      // this fixes some thread unsafe behaviour
+    disableTransactionActions();
 
     QEventLoop el;
     QFuture<QStringList> f;
@@ -1216,6 +1217,7 @@ void MainWindow::refreshTabFiles(bool clearContents, bool neverQuit)
     m_progressWidget->setRange(0, fileList.count());
     m_progressWidget->setValue(0);
 
+    CPUIntensiveComputing cic; // change mouse cursor
     foreach ( QString file, fileList )
     {
       if (file.indexOf("->") != -1)
@@ -1333,6 +1335,7 @@ void MainWindow::refreshTabFiles(bool clearContents, bool neverQuit)
     }
 
     m_progressWidget->close();
+    enableTransactionActions();
 
     root = fakeRoot;
     fakeModelPkgFileList->sort(0);
