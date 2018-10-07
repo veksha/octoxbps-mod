@@ -1191,10 +1191,17 @@ void MainWindow::refreshTabFiles(bool clearContents, bool neverQuit)
     bool first=true;
     lastDir = root;
 
+    m_progressWidget->setRange(0, 0);
+    m_progressWidget->setValue(0);
+    // show progress bar early to let user know about processing of big data
+    m_progressWidget->show(); // if progressbar is visible, this method will not
+                                                     // be called 2nd time. (see first line)
+                                                     // this fixes some thread unsafe behaviour
+
     QEventLoop el;
     QFuture<QStringList> f;
     QFutureWatcher<QStringList> fwPackageContents;
-    f = QtConcurrent::run(Package::getContents, pkgName, !nonInstalled);
+    f = QtConcurrent::run(Package::getContents, pkgName, !nonInstalled); // THREAD RUN
     connect(&fwPackageContents, SIGNAL(finished()), &el, SLOT(quit()));
     fwPackageContents.setFuture(f);
 
@@ -1208,7 +1215,6 @@ void MainWindow::refreshTabFiles(bool clearContents, bool neverQuit)
     int counter = 0;
     m_progressWidget->setRange(0, fileList.count());
     m_progressWidget->setValue(0);
-    m_progressWidget->show();
 
     foreach ( QString file, fileList )
     {
