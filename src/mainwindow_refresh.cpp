@@ -1212,7 +1212,11 @@ void MainWindow::refreshTabFiles(bool clearContents, bool neverQuit)
 
     foreach ( QString file, fileList )
     {
-      if (file.indexOf("->") != -1) continue;
+      if (file.indexOf("->") != -1)
+      {
+          counter++; // for more accurate progress value
+          continue;
+      }
 
       bool isDir = file.endsWith('/');
       isSymLinkToDir = false;
