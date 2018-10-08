@@ -782,18 +782,17 @@ void UnixCommand::executeCommand(const QString &pCommand, Language lang)
     m_process->setProcessEnvironment(env);
   }
 
-  if(isRootRunning())
-  {
+  if(isRootRunning()) {     // TODO: does this check needed at all? we can't even run OctoXBPS under root.
     command += "dbus-launch " + pCommand;
   }
-  else
-  {
-    if (WMHelper::getSUCommand() == ctn_KDESU)
-    {
+  else {
+    if (WMHelper::getSUCommand() == ctn_KDESU) {        // TODO: does this check work at all?
       command = WMHelper::getSUCommand() + pCommand;
     }
-    else
-    {
+    if (WMHelper::getSUCommand().contains(ctn_GKSU_2)) {
+      command = WMHelper::getSUCommand() + " -- sh -c \"echo [~text start~]; " + pCommand + "\"";
+    }
+    else {
       command = WMHelper::getSUCommand() + "\"" + pCommand + "\"";
     }
   }

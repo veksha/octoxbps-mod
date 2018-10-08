@@ -185,6 +185,17 @@ void XBPSExec::parseXBPSProcessOutput(QString output)
   if (m_commandExecuting == ectn_RUN_IN_TERMINAL ||
       m_commandExecuting == ectn_RUN_SYSTEM_UPGRADE_IN_TERMINAL) return;
 
+  //qDebug() << "if (m_waitingForTextStartMarker) {" << m_waitingForTextStartMarker << "} output=" << output;
+  if (m_waitingForTextStartMarker) {
+        if (output == "[~text start~]\r" || output == "[~text start~]") {
+            m_waitingForTextStartMarker = false;
+            return;
+        }
+        else {
+            return;
+        }
+    }
+
   bool continueTesting = false;
   QString perc;
   QString msg = output;
@@ -291,7 +302,7 @@ void XBPSExec::parseXBPSProcessOutput(QString output)
     msg.remove(QRegularExpression("QVariant.+"));
     msg.remove(QRegularExpression("libGL.+"));
     msg.remove(QRegularExpression("Password.+"));
-    msg.remove(QRegularExpression("gksu-run.+"));
+    //msg.remove(QRegularExpression("gksu-run.+")); // handled by m_waitingForTextStartMarker member
     msg.remove(QRegularExpression("GConf Error:.+"));
     msg.remove(QRegularExpression(":: Do you want.+"));
     msg.remove(QRegularExpression("org\\.kde\\."));
@@ -469,6 +480,13 @@ void XBPSExec::prepareTextToPrint(QString str, TreatString ts, TreatURLLinks tl)
  */
 void XBPSExec::onStarted()
 {
+    if (WMHelper::getSUCommand().contains(ctn_GKSU_2)) {
+        m_waitingForTextStartMarker = true;
+    }
+    else {
+        m_waitingForTextStartMarker = false;
+    }
+
   //First we output the name of action we are starting to execute!
   if (m_commandExecuting == ectn_CLEAN_CACHE)
   {

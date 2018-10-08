@@ -32,6 +32,7 @@ class XBPSExec : public QObject
 private:
   bool m_iLoveCandy;
   bool m_debugMode;
+  bool m_waitingForTextStartMarker;
   UnixCommand *m_unixCommand;
   CommandExecuting m_commandExecuting;
   QStringList m_lastCommandList; //run in terminal commands
